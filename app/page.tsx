@@ -6,7 +6,9 @@ type IconProps = SVGProps<SVGSVGElement>;
 type Category = {
   title: string;
   description: string;
-  Icon: ComponentType<IconProps>;
+  Icon?: ComponentType<IconProps>;
+  imageSrc?: string;
+  imageAlt?: string;
 };
 
 type Guide = {
@@ -14,17 +16,6 @@ type Guide = {
   text: string;
   Icon: ComponentType<IconProps>;
 };
-
-function MachinesIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <rect x="4" y="7" width="16" height="10" rx="2" />
-      <path d="M9 3v4M15 3v4M4 10h16M7 17v4M17 17v4" />
-      <circle cx="9" cy="13" r="1.2" />
-      <circle cx="15" cy="13" r="1.2" />
-    </svg>
-  );
-}
 
 function ItemsIcon(props: IconProps) {
   return (
@@ -93,7 +84,7 @@ function RecipeIcon(props: IconProps) {
 }
 
 const categories: Category[] = [
-  { Icon: MachinesIcon, title: "Machines", description: "Processing, power generation, chemistry, oil and industrial machinery." },
+  { title: "Machines", description: "Processing, power generation, chemistry, oil and industrial machinery.", imageSrc: "/machines.png", imageAlt: "HBM machine" },
   { Icon: ItemsIcon, title: "Items", description: "Materials, tools, components, resources and special equipment." },
   { Icon: WeaponsIcon, title: "Weapons", description: "Firearms, explosives, launchers and destructive technology." },
   { Icon: MissilesIcon, title: "Missiles", description: "Missiles, launch systems, targeting and related infrastructure." },
@@ -128,16 +119,16 @@ export default function Home() {
       </header>
 
       <section className="hero">
+        <div className="hazard-strip" />
         <div className="hero-inner">
-          <Image className="hero-logo" src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={768} height={579} priority />
-          <div>
+          <div className="hero-logo-wrap">
+            <Image className="hero-logo" src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={768} height={579} priority />
+          </div>
+          <div className="hero-copy">
             <span className="eyebrow">Official Wiki</span>
             <h1>HBM&apos;s Nuclear Tech Mod</h1>
             <h2>Unofficial NeoForge Edition</h2>
-            <p>
-              Documentation for the Minecraft 1.21.1 NeoForge port. The wiki is still being built,
-              so some sections are incomplete for now.
-            </p>
+            <p>Documentation for the Minecraft 1.21.1 NeoForge port. Browse machines, items, weapons, nuclear systems, recipes and progression.</p>
             <div className="hero-actions">
               <a className="primary-button" href="#wiki">Browse Wiki</a>
               <a className="secondary-button" href="https://github.com/YellowYotu/hbm_neoforge-1.21.1" target="_blank" rel="noreferrer">Source Code</a>
@@ -145,6 +136,7 @@ export default function Home() {
             <div className="version-row">
               <span>Minecraft 1.21.1</span>
               <span>NeoForge</span>
+              <span>By YellowYotu</span>
             </div>
           </div>
         </div>
@@ -153,19 +145,27 @@ export default function Home() {
       <section className="section" id="wiki">
         <div className="section-heading">
           <div>
-            <span className="section-kicker">Wiki</span>
+            <span className="section-kicker">Wiki database</span>
             <h3>Categories</h3>
           </div>
-          <p>Pages will be added as the documentation catches up with the mod.</p>
+          <p>The wiki is still being built. More category artwork and pages will be added as development continues.</p>
         </div>
 
         <div className="category-grid">
-          {categories.map(({ Icon, title, description }) => (
-            <article className="category-card" key={title}>
-              <div className="card-icon"><Icon /></div>
-              <h4>{title}</h4>
-              <p>{description}</p>
-              <span className="coming-soon">Coming soon</span>
+          {categories.map(({ Icon, imageSrc, imageAlt, title, description }) => (
+            <article className={`category-card${imageSrc ? " category-card-image" : ""}`} key={title}>
+              <div className="category-visual">
+                {imageSrc ? (
+                  <Image className="machine-category-image" src={imageSrc} alt={imageAlt ?? title} width={320} height={320} />
+                ) : Icon ? (
+                  <div className="card-icon"><Icon /></div>
+                ) : null}
+              </div>
+              <div className="category-content">
+                <h4>{title}</h4>
+                <p>{description}</p>
+                <span className="coming-soon">Coming soon</span>
+              </div>
             </article>
           ))}
         </div>
@@ -174,7 +174,7 @@ export default function Home() {
       <section className="guides-section" id="guides">
         <div className="section-heading">
           <div>
-            <span className="section-kicker">Guides</span>
+            <span className="section-kicker">Documentation</span>
             <h3>Useful pages</h3>
           </div>
         </div>
@@ -183,8 +183,10 @@ export default function Home() {
           {quickLinks.map(({ Icon, title, text }) => (
             <article className="guide-card" key={title}>
               <div className="guide-icon"><Icon /></div>
-              <h4>{title}</h4>
-              <p>{text}</p>
+              <div>
+                <h4>{title}</h4>
+                <p>{text}</p>
+              </div>
             </article>
           ))}
         </div>
@@ -192,8 +194,9 @@ export default function Home() {
 
       <section className="community-section">
         <div>
-          <h3>Community & support</h3>
-          <p>Questions belong on Discord. Bugs can be reported in the GitHub repository.</p>
+          <span className="section-kicker">Community</span>
+          <h3>Need help or found a bug?</h3>
+          <p>Ask questions on Discord or report reproducible issues in the GitHub repository.</p>
         </div>
         <div className="community-actions">
           <a className="primary-button" href="https://discord.gg/A9NK8xypwU" target="_blank" rel="noreferrer">Discord</a>
