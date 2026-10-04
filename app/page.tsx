@@ -9,6 +9,7 @@ type Category = {
   Icon?: ComponentType<IconProps>;
   imageSrc?: string;
   imageAlt?: string;
+  customVisual?: "black-cube";
 };
 
 type Guide = {
@@ -17,10 +18,30 @@ type Guide = {
   Icon: ComponentType<IconProps>;
 };
 
-function ItemsIcon(props: IconProps) {
+function ItemsCube() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>
-      <path d="M12 3 20 7 12 11 4 7 12 3ZM20 7v10l-8 4-8-4V7M12 11v10" />
+    <svg className="items-cube" viewBox="0 0 180 180" aria-hidden="true">
+      <defs>
+        <linearGradient id="cubeTop" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#35383d" />
+          <stop offset="1" stopColor="#181a1d" />
+        </linearGradient>
+        <linearGradient id="cubeLeft" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#1b1d20" />
+          <stop offset="1" stopColor="#090a0b" />
+        </linearGradient>
+        <linearGradient id="cubeRight" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#121416" />
+          <stop offset="1" stopColor="#020303" />
+        </linearGradient>
+      </defs>
+      <g stroke="#000" strokeWidth="5" strokeLinejoin="round">
+        <polygon points="90,22 145,52 90,82 35,52" fill="url(#cubeTop)" />
+        <polygon points="35,52 90,82 90,145 35,115" fill="url(#cubeLeft)" />
+        <polygon points="145,52 90,82 90,145 145,115" fill="url(#cubeRight)" />
+      </g>
+      <path d="M58 51 90 34l32 17-32 17z" fill="none" stroke="#555a62" strokeWidth="3" opacity="0.7" />
+      <path d="M48 67v36l31 17M132 67v36l-31 17" fill="none" stroke="#24272b" strokeWidth="3" opacity="0.9" />
     </svg>
   );
 }
@@ -85,7 +106,7 @@ function RecipeIcon(props: IconProps) {
 
 const categories: Category[] = [
   { title: "Machines", description: "Processing, power generation, chemistry, oil and industrial machinery.", imageSrc: "/machines.png", imageAlt: "HBM machine" },
-  { Icon: ItemsIcon, title: "Items", description: "Materials, tools, components, resources and special equipment." },
+  { title: "Items", description: "Materials, tools, components, resources and special equipment.", customVisual: "black-cube" },
   { Icon: WeaponsIcon, title: "Weapons", description: "Firearms, explosives, launchers and destructive technology." },
   { Icon: MissilesIcon, title: "Missiles", description: "Missiles, launch systems, targeting and related infrastructure." },
   { Icon: NuclearIcon, title: "Nuclear Systems", description: "Reactors, fuels, radiation, nuclear processing and power." },
@@ -103,7 +124,7 @@ export default function Home() {
     <main>
       <header className="topbar">
         <a className="brand" href="#" aria-label="HBM Wiki home">
-          <Image className="brand-logo" src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={96} height={72} priority />
+          <Image className="brand-logo" src="/logo-main.png" alt="HBM's NTM NeoForge Edition logo" width={160} height={120} priority />
           <span>
             <strong>HBM&apos;s Nuclear Tech Mod</strong>
             <small>Unofficial NeoForge Edition Wiki</small>
@@ -122,7 +143,7 @@ export default function Home() {
         <div className="hazard-strip" />
         <div className="hero-inner">
           <div className="hero-logo-wrap">
-            <Image className="hero-logo" src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={768} height={579} priority />
+            <Image className="hero-logo" src="/logo-main.png" alt="HBM's NTM NeoForge Edition logo" width={1536} height={1158} priority />
           </div>
           <div className="hero-copy">
             <span className="eyebrow">Official Wiki</span>
@@ -152,11 +173,13 @@ export default function Home() {
         </div>
 
         <div className="category-grid">
-          {categories.map(({ Icon, imageSrc, imageAlt, title, description }) => (
-            <article className={`category-card${imageSrc ? " category-card-image" : ""}`} key={title}>
+          {categories.map(({ Icon, imageSrc, imageAlt, customVisual, title, description }) => (
+            <article className={`category-card${imageSrc || customVisual ? " category-card-image" : ""}`} key={title}>
               <div className="category-visual">
                 {imageSrc ? (
                   <Image className="machine-category-image" src={imageSrc} alt={imageAlt ?? title} width={320} height={320} />
+                ) : customVisual === "black-cube" ? (
+                  <ItemsCube />
                 ) : Icon ? (
                   <div className="card-icon"><Icon /></div>
                 ) : null}
@@ -206,7 +229,7 @@ export default function Home() {
 
       <footer>
         <div className="footer-brand">
-          <Image src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={64} height={48} />
+          <Image src="/logo-main.png" alt="HBM's NTM NeoForge Edition logo" width={80} height={60} />
           <span>HBM&apos;s Nuclear Tech Mod: Unofficial NeoForge Edition</span>
         </div>
         <p>Original mod by <strong>HbmMods</strong> · NeoForge edition developed by <strong>YellowYotu</strong></p>
