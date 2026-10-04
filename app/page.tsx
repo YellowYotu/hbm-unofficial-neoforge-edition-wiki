@@ -1,18 +1,69 @@
 import Image from "next/image";
+import type { SVGProps } from "react";
 
-const categories = [
-  { icon: "⚙", title: "Machines", description: "Processing, power generation, chemistry, oil and industrial machinery." },
-  { icon: "◈", title: "Items", description: "Materials, tools, components, resources and special equipment." },
-  { icon: "✦", title: "Weapons", description: "Firearms, explosives, launchers and destructive technology." },
-  { icon: "➤", title: "Missiles", description: "Missiles, launch systems, targeting and related infrastructure." },
-  { icon: "☢", title: "Nuclear Systems", description: "Reactors, fuels, radiation, nuclear processing and power." },
-  { icon: "◆", title: "Fluids", description: "Industrial fluids, fuels, chemicals and fluid processing." },
+type IconProps = SVGProps<SVGSVGElement>;
+
+type Category = {
+  title: string;
+  description: string;
+  Icon: (props: IconProps) => JSX.Element;
+};
+
+type Guide = {
+  title: string;
+  text: string;
+  Icon: (props: IconProps) => JSX.Element;
+};
+
+function MachinesIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M9 3v4" /><path d="M15 3v4" /><path d="M4 10h16" /><rect x="4" y="7" width="16" height="10" rx="2" /><path d="M7 17v4" /><path d="M17 17v4" /><circle cx="9" cy="13" r="1.2" /><circle cx="15" cy="13" r="1.2" /></svg>;
+}
+
+function ItemsIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M12 3 20 7 12 11 4 7 12 3Z" /><path d="M20 7v10l-8 4-8-4V7" /><path d="M12 11v10" /></svg>;
+}
+
+function WeaponsIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M4 14h7l7-7 2 2-7 7v4h-2l-1.5-2H8l-1 1H4z" /><path d="M15 8l1.5-1.5" /></svg>;
+}
+
+function MissilesIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M8 16c-1.8-4.7 2.7-9.2 7-9 0 4.3-4.3 8.8-9 7Z" /><path d="M14 10l4-4" /><path d="M8 16l-3 3" /><path d="M7 19H4v-3" /></svg>;
+}
+
+function NuclearIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><circle cx="12" cy="12" r="1.8" /><path d="M13.4 10.6 17.8 8a7.5 7.5 0 0 0-10.6 0l4.4 2.6" /><path d="M10.6 13.4 8 17.8a7.5 7.5 0 0 0 8 0l-2.6-4.4" /><path d="M10.6 10.6 8 6.2a7.5 7.5 0 0 0 0 8l4.4-2.6" /></svg>;
+}
+
+function FluidsIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M12 3c3 4 5 6.7 5 10a5 5 0 1 1-10 0c0-3.3 2-6 5-10Z" /><path d="M9.5 13.5c.6 1.2 1.5 2 2.5 2.5" /></svg>;
+}
+
+function BookIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M5 5.5A2.5 2.5 0 0 1 7.5 3H19v16H7.5A2.5 2.5 0 0 0 5 21Z" /><path d="M5 5.5V21" /><path d="M9 7h6" /></svg>;
+}
+
+function ProgressIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d="M4 18h16" /><path d="M7 18V9" /><path d="M12 18V6" /><path d="M17 18v-4" /></svg>;
+}
+
+function RecipeIcon(props: IconProps) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M8 8h8" /><path d="M8 12h8" /><path d="M8 16h5" /></svg>;
+}
+
+const categories: Category[] = [
+  { Icon: MachinesIcon, title: "Machines", description: "Processing, power generation, chemistry, oil and industrial machinery." },
+  { Icon: ItemsIcon, title: "Items", description: "Materials, tools, components, resources and special equipment." },
+  { Icon: WeaponsIcon, title: "Weapons", description: "Firearms, explosives, launchers and destructive technology." },
+  { Icon: MissilesIcon, title: "Missiles", description: "Missiles, launch systems, targeting and related infrastructure." },
+  { Icon: NuclearIcon, title: "Nuclear Systems", description: "Reactors, fuels, radiation, nuclear processing and power." },
+  { Icon: FluidsIcon, title: "Fluids", description: "Industrial fluids, fuels, chemicals and fluid processing." },
 ];
 
-const quickLinks = [
-  { title: "Getting Started", text: "Start here if you are new to the mod." },
-  { title: "Progression", text: "A rough path through the main technology tiers." },
-  { title: "Recipes", text: "Crafting and machine recipes used throughout the mod." },
+const quickLinks: Guide[] = [
+  { Icon: BookIcon, title: "Getting Started", text: "Start here if you are new to the mod." },
+  { Icon: ProgressIcon, title: "Progression", text: "A rough path through the main technology tiers." },
+  { Icon: RecipeIcon, title: "Recipes", text: "Crafting and machine recipes used throughout the mod." },
 ];
 
 export default function Home() {
@@ -20,7 +71,7 @@ export default function Home() {
     <main>
       <header className="topbar">
         <a className="brand" href="#" aria-label="HBM Wiki home">
-          <Image className="brand-logo" src="/logo.png" alt="HBM logo" width={44} height={44} priority />
+          <Image className="brand-logo" src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={66} height={44} priority />
           <span>
             <strong>HBM&apos;s Nuclear Tech Mod</strong>
             <small>Unofficial NeoForge Edition Wiki</small>
@@ -37,7 +88,7 @@ export default function Home() {
 
       <section className="hero">
         <div className="hero-inner">
-          <Image className="hero-logo" src="/logo.png" alt="HBM logo" width={96} height={96} priority />
+          <Image className="hero-logo" src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={240} height={160} priority />
           <div>
             <span className="eyebrow">Official Wiki</span>
             <h1>HBM&apos;s Nuclear Tech Mod</h1>
@@ -68,11 +119,11 @@ export default function Home() {
         </div>
 
         <div className="category-grid">
-          {categories.map((category) => (
-            <article className="category-card" key={category.title}>
-              <div className="card-icon">{category.icon}</div>
-              <h4>{category.title}</h4>
-              <p>{category.description}</p>
+          {categories.map(({ Icon, title, description }) => (
+            <article className="category-card" key={title}>
+              <div className="card-icon"><Icon /></div>
+              <h4>{title}</h4>
+              <p>{description}</p>
               <span className="coming-soon">Coming soon</span>
             </article>
           ))}
@@ -88,10 +139,11 @@ export default function Home() {
         </div>
 
         <div className="guide-grid">
-          {quickLinks.map((item) => (
-            <article className="guide-card" key={item.title}>
-              <h4>{item.title}</h4>
-              <p>{item.text}</p>
+          {quickLinks.map(({ Icon, title, text }) => (
+            <article className="guide-card" key={title}>
+              <div className="guide-icon"><Icon /></div>
+              <h4>{title}</h4>
+              <p>{text}</p>
             </article>
           ))}
         </div>
@@ -110,7 +162,7 @@ export default function Home() {
 
       <footer>
         <div className="footer-brand">
-          <Image src="/logo.png" alt="" width={28} height={28} />
+          <Image src="/logo.webp" alt="HBM's NTM NeoForge Edition logo" width={42} height={28} />
           <span>HBM&apos;s Nuclear Tech Mod: Unofficial NeoForge Edition</span>
         </div>
         <p>Original mod by <strong>HbmMods</strong> · NeoForge edition developed by <strong>YellowYotu</strong></p>
