@@ -1,0 +1,1 @@
+import WikiCategoryPage from "../WikiCategoryPage"; export default function MachinesPage() { return <WikiCategoryPage category="machines" />; }
