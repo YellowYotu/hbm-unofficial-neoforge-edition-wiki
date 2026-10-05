@@ -20,28 +20,10 @@ type Guide = {
 
 function ItemsCube() {
   return (
-    <svg className="items-cube" viewBox="0 0 180 180" aria-hidden="true">
-      <defs>
-        <linearGradient id="cubeTop" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#35383d" />
-          <stop offset="1" stopColor="#181a1d" />
-        </linearGradient>
-        <linearGradient id="cubeLeft" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#1b1d20" />
-          <stop offset="1" stopColor="#090a0b" />
-        </linearGradient>
-        <linearGradient id="cubeRight" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#121416" />
-          <stop offset="1" stopColor="#020303" />
-        </linearGradient>
-      </defs>
-      <g stroke="#000" strokeWidth="5" strokeLinejoin="round">
-        <polygon points="90,22 145,52 90,82 35,52" fill="url(#cubeTop)" />
-        <polygon points="35,52 90,82 90,145 35,115" fill="url(#cubeLeft)" />
-        <polygon points="145,52 90,82 90,145 145,115" fill="url(#cubeRight)" />
-      </g>
-      <path d="M58 51 90 34l32 17-32 17z" fill="none" stroke="#555a62" strokeWidth="3" opacity="0.7" />
-      <path d="M48 67v36l31 17M132 67v36l-31 17" fill="none" stroke="#24272b" strokeWidth="3" opacity="0.9" />
+    <svg className="items-cube" viewBox="0 0 180 180" fill="none" stroke="#000" strokeWidth="5" strokeLinejoin="round" aria-hidden="true">
+      <polygon points="90,22 145,52 90,82 35,52" />
+      <polygon points="35,52 90,82 90,145 35,115" />
+      <polygon points="145,52 90,82 90,145 145,115" />
     </svg>
   );
 }
