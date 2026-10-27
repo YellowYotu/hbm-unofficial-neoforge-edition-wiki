@@ -20,7 +20,7 @@ export default function WikiList({ category, entries }: Props) {
     </div>
     <div className="wiki-entry-grid">{filtered.map(entry =>
       <Link className="wiki-entry-card" href={`/wiki/${category}/${entrySlug(entry)}`} key={entry.id}>
-        <WikiIcon src={iconPath(category, entry)} alt={entry.name} variant={category === "fluids" ? "fluid" : "normal"} />
+        <WikiIcon src={iconPath(category, entry)} alt={entry.name} itemId={entry.id} variant={category === "machines" ? "machine" : category === "fluids" ? "fluid" : "normal"} />
         <div className="wiki-entry-copy"><span className="wiki-entry-group">{entry.group}</span><h2>{entry.name}</h2><code>{entry.id}</code>{entry.summary ? <p>{entry.summary}</p> : null}</div>
       </Link>)}</div>
     {filtered.length === 0 ? <div className="wiki-empty">Nothing found.</div> : null}
