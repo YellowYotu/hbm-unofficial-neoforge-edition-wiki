@@ -11,7 +11,7 @@ export default function WikiCategoryPage({ category }: Props) {
     </div></header>
     <section className="wiki-page-content">
       <p className="recipe-directory"><Link href="/wiki/recipes">Explore complete crafting and machine recipes →</Link></p>
-      <div className="wiki-upload-note"><strong>Artwork folder:</strong><code>public/wiki/{category}/icons/</code><span>Drop PNG files there. Missing artwork automatically shows a question mark.</span></div>
+
       <WikiList category={category} entries={[...section.entries]} />
     </section>
   </main>;
