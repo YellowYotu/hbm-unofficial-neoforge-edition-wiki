@@ -19,7 +19,7 @@ export default function WikiIcon({ src, alt, variant = "normal", itemId }: WikiI
   const id = itemId ?? "";
   const models = catalog.models as Record<string, string>;
   const textures = catalog.textures as Record<string, string>;
-  const previews = catalog.previews as Record<string, { model?: string | null; texture?: string | null; faces?: Record<string, string>; flipV?: boolean; definition?: { parent?: string; textures?: Record<string, string>; elements?: { from: number[]; to: number[]; faces: Record<string, { texture?: string; uv?: number[]; rotation?: number }>; rotation?: { origin: number[]; axis: string; angle: number } }[] } | null }>;
+  const previews = catalog.previews as unknown as Record<string, { model?: string | null; texture?: string | null; faces?: Record<string, string>; flipV?: boolean; definition?: { parent?: string; textures?: Record<string, string>; elements?: { from: number[]; to: number[]; faces: Record<string, { texture?: string; uv?: number[]; rotation?: number }>; rotation?: { origin: number[]; axis: string; angle: number } }[] } | null }>;
   const preview = variant === "machine" ? previews[id] ?? { model: models[id], texture: textures[id] } : undefined;
   const image = textures[id] ?? src;
   return <div ref={container} className={`wiki-entry-image ${variant === "fluid" ? "wiki-entry-image-fluid" : ""} ${variant === "machine" ? "wiki-entry-image-machine" : ""}`}>
