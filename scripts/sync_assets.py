@@ -47,7 +47,7 @@ def main():
     blockstate_dir = root + "blockstates/"
     blocknames = sorted(Path(n).stem for n in names if n.startswith(blockstate_dir) and n.endswith(".json"))
     for stem in blocknames:
-        if not stem.startswith(KINDS) or stem.endswith("_dummy"):
+        if not stem.startswith(KINDS) or stem.endswith(("_dummy", "_renderer", "_head_render")):
             continue
         model_json = None
         for candidate in (stem, stem + "_off", stem + "_on"):
@@ -99,9 +99,16 @@ def main():
                     texture = "/wiki/assets/textures/block/" + Path(filename).name
         if not faces and texture:
             faces = {face: texture for face in ("up", "down", "north", "south", "east", "west")}
+        definition = None
+        if model_json and model_json.get("elements"):
+            definition = model_json
+        elif model_json and model_json.get("parent", "").startswith("minecraft:block/"):
+            definition = model_json
+        if definition:
+            index.setdefault("definitions", {})[stem] = definition
         entry = {"id": stem, "name": stem.replace("_", " ").title(), "group": "Machines", "model": ("/wiki/assets/" + model.split(ROOT, 1)[1]) if model else None, "texture": texture}
         index["machines"].append(entry)
-        index["previews"][stem] = {"model": entry["model"], "texture": texture, "faces": faces, "flipV": bool(model_json and model_json.get("flip_v", False))}
+        index["previews"][stem] = {"model": entry["model"], "texture": texture, "faces": faces, "flipV": bool(model_json and model_json.get("flip_v", False)), "definition": definition}
         if entry["model"]:
             index["models"][stem] = entry["model"]
         if texture:
