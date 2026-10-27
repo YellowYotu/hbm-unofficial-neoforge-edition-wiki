@@ -20,7 +20,7 @@ def main():
         archive = zipfile.ZipFile(io.BytesIO(response.read()))
     root = next(n.split(ROOT)[0] + ROOT for n in archive.namelist() if ROOT in n)
     names = set(archive.namelist())
-    index = {"machines": [], "items": [], "models": {}, "textures": {}}
+    index = {"machines": [], "items": [], "models": {}, "textures": {}, "previews": {}}
     if DEST.exists():
         shutil.rmtree(DEST)
     for member in archive.namelist():
@@ -38,7 +38,7 @@ def main():
             target = DEST / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(archive.read(member))
-        elif relative.startswith("models/block/") and relative.endswith((".obj", ".mtl")):
+        elif (relative.startswith("models/block/") or relative.startswith("models/obj/")) and relative.endswith((".obj", ".mtl")):
             target = DEST / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(archive.read(member))
@@ -49,14 +49,50 @@ def main():
     for stem in blocknames:
         if not stem.startswith(KINDS) or stem.endswith("_dummy"):
             continue
+        model_json = None
+        for candidate in (stem, stem + "_off", stem + "_on"):
+            key = root + "models/block/" + candidate + ".json"
+            if key in names:
+                try:
+                    model_json = json.loads(archive.read(key))
+                    break
+                except (ValueError, UnicodeDecodeError):
+                    pass
         model = root + "models/block/" + stem + ".obj"
+        if model_json and model_json.get("loader") == "neoforge:obj":
+            model = root + model_json.get("model", "").split(":", 1)[-1]"
         if model not in names:
             alternatives = [n for n in names if n.startswith(root + "models/block/" + stem + "_") and n.endswith(".obj")]
             model = sorted(alternatives)[0] if alternatives else ""
         textures = sorted(n for n in names if n.startswith(root + "textures/block/" + stem) and n.endswith(".png"))
         texture = ("/wiki/assets/textures/block/" + Path(textures[0]).name) if textures else None
+        faces = {}
+        if model_json:
+            tex = model_json.get("textures", {})
+            shape_faces = {}
+            elements = model_json.get("elements", [])
+            if elements:
+                shape_faces = {face: info.get("texture", "") for face, info in elements[0].get("faces", {}).items()}
+            for face in ("up", "down", "north", "south", "east", "west"):
+                face_key = shape_faces.get(face, "")
+                if face_key.startswith("#"):
+                    face_key = tex.get(face_key[1:], "")
+                elif not face_key:
+                    face_key = tex.get(face) or tex.get("top" if face == "up" else "bottom" if face == "down" else "side") or tex.get("all") or tex.get("texture") or ""
+                if face_key.startswith("hbm_neoforge:block/"):
+                    filename = root + "textures/block/" + face_key.split("block/", 1)[1] + ".png"
+                    if filename in names:
+                        faces[face] = "/wiki/assets/textures/block/" + Path(filename).name
+            selected = tex.get("texture0") or tex.get("particle") or ""
+            if selected.startswith("hbm_neoforge:block/"):
+                filename = root + "textures/block/" + selected.split("block/", 1)[1] + ".png"
+                if filename in names:
+                    texture = "/wiki/assets/textures/block/" + Path(filename).name
+        if not faces and texture:
+            faces = {face: texture for face in ("up", "down", "north", "south", "east", "west")}
         entry = {"id": stem, "name": stem.replace("_", " ").title(), "group": "Machines", "model": ("/wiki/assets/models/block/" + Path(model).name) if model else None, "texture": texture}
         index["machines"].append(entry)
+        index["previews"][stem] = {"model": entry["model"], "texture": texture, "faces": faces, "flipV": bool(model_json and model_json.get("flip_v", False))}
         if entry["model"]:
             index["models"][stem] = entry["model"]
         if texture:
