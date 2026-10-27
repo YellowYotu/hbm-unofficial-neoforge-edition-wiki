@@ -36,7 +36,7 @@ export default function MachinePreview({ preview, name }: { preview: Preview; na
       map.colorSpace = THREE.SRGBColorSpace;
       map.magFilter = THREE.NearestFilter;
       map.minFilter = THREE.NearestMipmapNearestFilter;
-      map.flipY = preview.flipV === undefined ? false : !preview.flipV;
+      map.flipY = !preview.model;
       textures.push(map);
       return map;
     };
