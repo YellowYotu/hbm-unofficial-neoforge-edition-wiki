@@ -47,7 +47,7 @@ def main():
     blockstate_dir = root + "blockstates/"
     blocknames = sorted(Path(n).stem for n in names if n.startswith(blockstate_dir) and n.endswith(".json"))
     for stem in blocknames:
-        if not stem.startswith(KINDS):
+        if not stem.startswith(KINDS) or stem.endswith("_dummy"):
             continue
         model = root + "models/block/" + stem + ".obj"
         if model not in names:
