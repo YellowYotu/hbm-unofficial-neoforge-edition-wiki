@@ -1,0 +1,30 @@
+name: Synchronize wiki assets
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '35 5 * * *'
+  push:
+    paths:
+      - scripts/sync_assets.py
+      - .github/workflows/sync-assets.yml
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/sync_assets.py
+      - name: Publish asset catalog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/wiki/catalog.generated.json public/wiki/assets
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: synchronize machine models and item textures"
+            git pull --rebase origin main
+            git push origin main
+          fi
