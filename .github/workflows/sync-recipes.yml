@@ -25,5 +25,6 @@ jobs:
           git add app/wiki/recipes.generated.json
           if ! git diff --cached --quiet; then
             git commit -m "docs: synchronize recipes with current mod sources"
-            git push
+            git pull --rebase origin main
+            git push origin main
           fi
