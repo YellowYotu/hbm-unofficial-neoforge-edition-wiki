@@ -60,7 +60,7 @@ def main():
                     pass
         model = root + "models/block/" + stem + ".obj"
         if model_json and model_json.get("loader") == "neoforge:obj":
-            model = root + model_json.get("model", "").split(":", 1)[-1]"
+            model = root + model_json.get("model", "").split(":", 1)[-1]
         if model not in names:
             alternatives = [n for n in names if n.startswith(root + "models/block/" + stem + "_") and n.endswith(".obj")]
             model = sorted(alternatives)[0] if alternatives else ""
