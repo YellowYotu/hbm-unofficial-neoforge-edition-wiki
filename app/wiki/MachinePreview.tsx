@@ -91,7 +91,7 @@ export default function MachinePreview({ preview, name }: { preview: Preview; na
         mesh.position.set(center[0], center[1], center[2]);
         if (element.rotation) {
           const axis = element.rotation.axis as "x" | "y" | "z";
-          const rotationOrigin = new THREE.Vector3(...element.rotation.origin.map(n => n / 8 - 1));
+          const rotationOrigin = new THREE.Vector3(element.rotation.origin[0] / 8 - 1, element.rotation.origin[1] / 8 - 1, element.rotation.origin[2] / 8 - 1);
           mesh.position.sub(rotationOrigin);
           mesh.position.applyAxisAngle(new THREE.Vector3(axis === "x" ? 1 : 0, axis === "y" ? 1 : 0, axis === "z" ? 1 : 0), THREE.MathUtils.degToRad(element.rotation.angle));
           mesh.position.add(rotationOrigin);
