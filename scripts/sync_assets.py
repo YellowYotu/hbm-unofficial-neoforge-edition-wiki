@@ -58,6 +58,15 @@ def main():
                     break
                 except (ValueError, UnicodeDecodeError):
                     pass
+        if not model_json or model_json.get("loader") != "neoforge:obj":
+            item_key = root + "models/item/" + stem + ".json"
+            if item_key in names:
+                try:
+                    item_json = json.loads(archive.read(item_key))
+                    if item_json.get("loader") == "neoforge:obj":
+                        model_json = item_json
+                except (ValueError, UnicodeDecodeError):
+                    pass
         model = root + "models/block/" + stem + ".obj"
         if model_json and model_json.get("loader") == "neoforge:obj":
             model = root + model_json.get("model", "").split(":", 1)[-1]
