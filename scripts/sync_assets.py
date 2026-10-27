@@ -99,7 +99,7 @@ def main():
                     texture = "/wiki/assets/textures/block/" + Path(filename).name
         if not faces and texture:
             faces = {face: texture for face in ("up", "down", "north", "south", "east", "west")}
-        entry = {"id": stem, "name": stem.replace("_", " ").title(), "group": "Machines", "model": ("/wiki/assets/models/block/" + Path(model).name) if model else None, "texture": texture}
+        entry = {"id": stem, "name": stem.replace("_", " ").title(), "group": "Machines", "model": ("/wiki/assets/" + model.split(ROOT, 1)[1]) if model else None, "texture": texture}
         index["machines"].append(entry)
         index["previews"][stem] = {"model": entry["model"], "texture": texture, "faces": faces, "flipV": bool(model_json and model_json.get("flip_v", False))}
         if entry["model"]:
