@@ -17,7 +17,7 @@ export default async function WikiEntryPage({ params }: Props) {
   return <main className="wiki-page">
     <header className="wiki-page-header"><div className="wiki-page-header-inner">
       <Link className="wiki-back" href={`/wiki/${category}`}>← {section.title}</Link>
-      <div className="wiki-detail-head"><WikiIcon src={image} alt={entry.name} variant={category === "fluids" ? "fluid" : "normal"} /><div><span className="section-kicker">{entry.group} · {WIKI_VERSION}</span><h1>{entry.name}</h1><code>{entry.id}</code></div></div>
+      <div className="wiki-detail-head"><WikiIcon src={image} alt={entry.name} itemId={entry.id} variant={category === "machines" ? "machine" : category === "fluids" ? "fluid" : "normal"} /><div><span className="section-kicker">{entry.group} · {WIKI_VERSION}</span><h1>{entry.name}</h1><code>{entry.id}</code></div></div>
     </div></header>
     <section className="wiki-detail-content">
       <article className="wiki-detail-card wiki-detail-wide">
@@ -63,15 +63,10 @@ export default async function WikiEntryPage({ params }: Props) {
         <RecipePanel recipes={recipes as Recipe[]} itemId={entry.id} />
       </article>
 
-      <article className="wiki-detail-card">
-        <h2>Icon file</h2>
-        <p>Add or replace the PNG at:</p>
-        <code className="wiki-path">public{image}</code>
-      </article>
 
       <article className="wiki-detail-card">
         <h2>Version</h2>
-        <p>This page is scoped to {WIKI_VERSION}. Unreleased 0.0.6-B content is intentionally excluded.</p>
+        <p>This page is scoped to {WIKI_VERSION}. Version 0.0.7 content will appear when it is available in the source repository.</p>
       </article>
     </section>
   </main>;
