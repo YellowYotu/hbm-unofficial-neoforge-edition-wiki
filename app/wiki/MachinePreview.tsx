@@ -1,105 +1,116 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 
-export default function MachinePreview({ model, texture, name }: { model: string; texture?: string; name: string }) {
+type Preview = { model?: string | null; texture?: string | null; faces?: Record<string, string>; flipV?: boolean };
+export default function MachinePreview({ preview, name }: { preview: Preview; name: string }) {
   const root = useRef<HTMLDivElement>(null);
-  const [error, setError] = useState(false);
   useEffect(() => {
     const element = root.current;
     if (!element) {
       return;
     }
     let disposed = false;
+    let frame = 0;
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(32, 1, 0.01, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 200);
+    camera.position.set(3.3, 2.55, 4.1);
+    camera.lookAt(0, 0, 0);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power" });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     element.appendChild(renderer.domElement);
-    scene.add(new THREE.HemisphereLight(0xffffff, 0x54606b, 3));
-    const light = new THREE.DirectionalLight(0xffffff, 3);
-    light.position.set(4, 8, 6);
+    scene.add(new THREE.AmbientLight(0xffffff, 2.2));
+    const light = new THREE.DirectionalLight(0xffffff, 2);
+    light.position.set(5, 9, 7);
     scene.add(light);
-    let mesh: THREE.Group | undefined;
-    let imageTexture: THREE.Texture | undefined;
-    let animation = 0;
+    const textures: THREE.Texture[] = [];
+    const objects: THREE.Object3D[] = [];
+    const mapLoader = new THREE.TextureLoader();
+    const loadMap = (url?: string | null) => {
+      if (!url) {
+        return null;
+      }
+      const map = mapLoader.load(url);
+      map.colorSpace = THREE.SRGBColorSpace;
+      map.magFilter = THREE.NearestFilter;
+      map.minFilter = THREE.NearestMipmapNearestFilter;
+      map.flipY = preview.flipV === undefined ? false : !preview.flipV;
+      textures.push(map);
+      return map;
+    };
+    const addCube = () => {
+      const faces = preview.faces ?? {};
+      const side = preview.texture ?? null;
+      const order = ["east", "west", "up", "down", "south", "north"];
+      const materials = order.map(face => new THREE.MeshStandardMaterial({ map: loadMap(faces[face] ?? side), color: 0xffffff, roughness: 1, metalness: 0 }));
+      const cube = new THREE.Mesh(new THREE.BoxGeometry(1.85, 1.85, 1.85), materials);
+      cube.rotation.y = -Math.PI / 5;
+      scene.add(cube);
+      objects.push(cube);
+    };
+    if (preview.model) {
+      new OBJLoader().load(preview.model, object => {
+        if (disposed) {
+          return;
+        }
+        const material = new THREE.MeshStandardMaterial({ map: loadMap(preview.texture), color: 0xffffff, roughness: 0.88, metalness: 0, side: THREE.DoubleSide });
+        object.traverse(part => {
+          if (part instanceof THREE.Mesh) {
+            part.material = material;
+          }
+        });
+        const bounds = new THREE.Box3().setFromObject(object);
+        const size = bounds.getSize(new THREE.Vector3());
+        const center = bounds.getCenter(new THREE.Vector3());
+        object.position.sub(center);
+        object.scale.setScalar(2.1 / Math.max(size.x, size.y, size.z, 0.01));
+        scene.add(object);
+        objects.push(object);
+      }, undefined, addCube);
+    } else {
+      addCube();
+    }
     const resize = () => {
       const width = Math.max(element.clientWidth, 1);
       const height = Math.max(element.clientHeight, 1);
+      renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-      renderer.setSize(width, height, false);
+      renderer.render(scene, camera);
     };
     const observer = new ResizeObserver(resize);
     observer.observe(element);
-    resize();
-    const loader = new OBJLoader();
-    loader.load(model, object => {
-      if (disposed) {
-        return;
-      }
-      mesh = object;
-      const box = new THREE.Box3().setFromObject(object);
-      const center = box.getCenter(new THREE.Vector3());
-      const size = box.getSize(new THREE.Vector3());
-      object.position.sub(center);
-      const max = Math.max(size.x, size.y, size.z, 0.01);
-      object.scale.setScalar(2 / max);
-      camera.position.set(3.7, 2.7, 4.6);
-      camera.lookAt(0, 0, 0);
-      object.traverse(part => {
-        if (part instanceof THREE.Mesh) {
-          part.material = new THREE.MeshStandardMaterial({ color: 0xaeb7bc, roughness: 0.85, metalness: 0.14, side: THREE.DoubleSide });
-        }
-      });
-      scene.add(object);
-      if (texture) {
-        new THREE.TextureLoader().load(texture, map => {
-          if (disposed) {
-            map.dispose();
-            return;
-          }
-          imageTexture = map;
-          map.colorSpace = THREE.SRGBColorSpace;
-          map.flipY = false;
-          map.magFilter = THREE.NearestFilter;
-          object.traverse(part => {
-            if (part instanceof THREE.Mesh) {
-              (part.material as THREE.MeshStandardMaterial).map = map;
-              (part.material as THREE.MeshStandardMaterial).color.set(0xffffff);
-              (part.material as THREE.MeshStandardMaterial).needsUpdate = true;
-            }
-          });
-        });
-      }
-    }, undefined, () => setError(true));
     const draw = () => {
       if (disposed) {
         return;
       }
       renderer.render(scene, camera);
-      animation = requestAnimationFrame(draw);
+      frame = requestAnimationFrame(draw);
     };
+    resize();
     draw();
     return () => {
       disposed = true;
-      cancelAnimationFrame(animation);
+      cancelAnimationFrame(frame);
       observer.disconnect();
-      mesh?.traverse(part => {
-        if (part instanceof THREE.Mesh) {
-          part.geometry.dispose();
-          (part.material as THREE.Material).dispose();
-        }
-      });
-      imageTexture?.dispose();
+      for (const object of objects) {
+        object.traverse(part => {
+          if (part instanceof THREE.Mesh) {
+            part.geometry.dispose();
+            for (const material of Array.isArray(part.material) ? part.material : [part.material]) {
+              material.dispose();
+            }
+          }
+        });
+      }
+      for (const map of textures) {
+        map.dispose();
+      }
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [model, texture]);
-  if (error) {
-    return <div className="model-preview-fallback" aria-label={name}>{name.slice(0, 2).toUpperCase()}</div>;
-  }
-  return <div ref={root} className="model-preview" role="img" aria-label={name + " three-dimensional model"} />;
+  }, [preview.model, preview.texture, preview.flipV, preview.faces]);
+  return <div ref={root} className="model-preview" role="img" aria-label={name + " 3D preview"} />;
 }
