@@ -22,9 +22,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
           git add app/wiki/catalog.generated.json public/wiki/assets
           if ! git diff --cached --quiet; then
             git commit -m "docs: synchronize machine models and item textures"
-            git pull --rebase origin main
             git push origin main
           fi
