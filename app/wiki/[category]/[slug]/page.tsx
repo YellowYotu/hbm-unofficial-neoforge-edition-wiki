@@ -1,3 +1,5 @@
+import recipes from "../../recipes.generated.json";
+import { RecipePanel, type Recipe } from "../../RecipePanel";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import WikiIcon from "../../WikiIcon";
@@ -54,6 +56,12 @@ export default async function WikiEntryPage({ params }: Props) {
         <h2>How it works</h2>
         <ul className="wiki-detail-list">{machine.notes.map(note => <li key={note}>{note}</li>)}</ul>
       </article> : null}
+
+      <article className="wiki-detail-card wiki-detail-wide">
+        <h2>Crafting and processing recipes</h2>
+        <p className="wiki-detail-subtitle">Source-derived recipes using or producing this entry.</p>
+        <RecipePanel recipes={recipes as Recipe[]} itemId={entry.id} />
+      </article>
 
       <article className="wiki-detail-card">
         <h2>Icon file</h2>
